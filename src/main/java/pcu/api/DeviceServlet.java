@@ -21,8 +21,6 @@ import pcu.vo.Result;
 
 /**
  * 
- * example : http://www.vogella.com/tutorials/GoogleAppEngineJava/article.html
- * 
  * 
  * input 값만 있기 때문에 별도의 인증절차는 필요없음 data save 절차 20181204
  * 

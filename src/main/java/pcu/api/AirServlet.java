@@ -21,8 +21,7 @@ import pcu.vo.Result;
 
 /**
  * 
- * 2019 spring project air https://www.youtube.com/watch?v=HDBPmYFVQho
- * 
+ *
  * test url
  * get insert
  * http://localhost:8080/air?did=a101&dust25=10&voc=200
@@ -240,97 +239,4 @@ public class AirServlet extends HttpServlet {
 	}
 	
 	
-	
-	// ----------CRUD------------
-	/*
-	private Entity getEntity(Key key) {
-		Entity entity = null;
-		try {
-			entity = datastore.get(key);
-		} catch (EntityNotFoundException e) {
-			e.printStackTrace();
-		}
-		return entity;
-	}
-
-	private List<Air> readAir(String did, String period, int amount) {
-		List<Air> airs = new ArrayList<>();
-		final Query q = new Query(Air.NAME).addSort(Air.REGDATE, SortDirection.DESCENDING) // 날자역순으로 sorting
-				.setFilter(new FilterPredicate(Air.DID, FilterOperator.EQUAL, did));
-
-		PreparedQuery pq = datastore.prepare(q);
-
-		if (period == null) {
-			List<Entity> entitys = pq.asList(FetchOptions.Builder.withLimit(amount)); // Retrieve up to five posts
-			entitys.forEach(entity -> {
-				Air air = entityToObject(entity);
-				airs.add(air);
-			});
-		} else if (period.equals("sec")) {
-			airs.addAll(average(pq.asIterable(), 1000, amount));
-		} else if (period.equals("min")) {
-			airs.addAll(average(pq.asIterable(), 1000 * 60, amount));
-		} else if (period.equals("hour")) {
-			airs.addAll(average(pq.asIterable(), 1000 * 60 * 60, amount));
-		} else if (period.equals("day")) {
-			airs.addAll(average(pq.asIterable(), 1000 * 60 * 60 * 30, amount));
-		}
-		return airs;
-	}
-
-	private void delete(Key key) {
-		datastore.delete(key);
-	}
-
-	private boolean deleteAll(String did) {
-		// AsyncMemcacheService memcache =
-		// MemcacheServiceFactory.getAsyncMemcacheService();
-		// memcache.clearAll()
-		try {
-			final Query q = new Query(Air.NAME).setFilter(new FilterPredicate(Air.DID, FilterOperator.EQUAL, did));
-			PreparedQuery pq = datastore.prepare(q);
-			pq.asIterable().forEach(entity -> {
-				datastore.delete(entity.getKey());
-			});
-		} catch (Exception e) {
-			log.warning(e.toString());
-			return false;
-		}
-		return true;
-	}
-	*/
-	
-	/*
-	 aggregate 기능은 잠시 중지
-	private List<Air> average(final Iterable<Entity> entitys, long period, int amount) {
-		List<Air> avergageAirs = new ArrayList<>();
-
-		// AtomicInteger atomInt = new AtomicInteger(0);
-		// AtomicLong atomLong = new AtomicLong(0);
-		long tempTime = 0;
-		int tempCount = 0;
-
-		int totalCount = 0;
-		int avgCount = 0;
-		for (Entity entity : entitys) {
-			long time = (long) entity.getProperty(Air.REGDATE);
-			if (Math.abs(time - tempTime) > period) {
-				tempTime = time;
-				if (++tempCount <= amount) {
-					// 나중에 평균으로 계산할것
-					// 시간 평균으로 수정할것
-					Air air = entityToObject(entity);
-					// -----
-					avergageAirs.add(air);
-
-				} else {
-					avgCount++;					
-					break;
-				}
-			} else {
-
-			}
-		}
-		return avergageAirs;
-	}*/
 }
