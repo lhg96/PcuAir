@@ -87,3 +87,25 @@ mvn appengine:run
 # 배포
 mvn appengine:deploy
 ```
+
+## 📞 문의하기
+
+[![Email](https://img.shields.io/badge/Email-hyun.lim@okkorea.net-red)](mailto:hyun.lim@okkorea.net)
+[![Website](https://img.shields.io/badge/Website-okkorea.net-blue)](https://www.okkorea.net)
+
+개발 관련 컨설팅 및 외주 받습니다.
+
+프로젝트 관리자 연락처:
+- name: 임현근 (Hyun-Keun Lim)
+- Email: hyun.lim@okkorea.net
+- homepage: https://www.okkorea.net
+
+---
+
+<div align="center">
+
+**⭐ 이 프로젝트가 도움이 되셨다면 Star를 눌러주세요! ⭐**
+
+![GitHub Repo stars](https://img.shields.io/github/stars/lhg96/smart-learning-platform?style=social)
+
+</div>
