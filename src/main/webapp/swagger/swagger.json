@@ -1,0 +1,665 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "PCU Air API",
+    "description": "서블릿 기반으로 제공되는 공기질 측정 및 디바이스 관리 API 명세입니다.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "로컬 개발 서버"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Air",
+      "description": "공기질 측정 데이터 관리"
+    },
+    {
+      "name": "Device",
+      "description": "측정 디바이스 관리"
+    },
+    {
+      "name": "Utility",
+      "description": "보조 기능"
+    }
+  ],
+  "paths": {
+    "/api/air": {
+      "get": {
+        "tags": [
+          "Air"
+        ],
+        "summary": "공기질 데이터 조회",
+        "description": "`command` 값에 따라 최근 데이터, 단일 데이터 또는 목록을 반환합니다.",
+        "parameters": [
+          {
+            "name": "command",
+            "in": "query",
+            "description": "`list`, `last`, `read` 중 하나를 지정합니다.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "list",
+                "last",
+                "read"
+              ]
+            }
+          },
+          {
+            "name": "did",
+            "in": "query",
+            "description": "`list` 또는 `last` 명령에서 사용할 디바이스 ID",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "aid",
+            "in": "query",
+            "description": "`read` 명령에서 사용할 측정 ID",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "description": "`list` 명령에 대한 페이지 커서 값",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Air"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AirListResult"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ApiMessage"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Air"
+        ],
+        "summary": "새 공기질 측정 등록",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "did"
+                ],
+                "properties": {
+                  "did": {
+                    "type": "string",
+                    "description": "디바이스 ID"
+                  },
+                  "dust10": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "dust25": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "dust100": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "voc": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "co": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "radon": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "hum": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "temp": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "등록 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Air"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Air"
+        ],
+        "summary": "공기질 데이터 삭제",
+        "parameters": [
+          {
+            "name": "command",
+            "in": "query",
+            "description": "`delete` 또는 `deleteall` 명령",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "delete",
+                "deleteall"
+              ]
+            }
+          },
+          {
+            "name": "aid",
+            "in": "query",
+            "description": "`delete` 명령에 사용할 측정 ID",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "did",
+            "in": "query",
+            "description": "`deleteall` 명령에 사용할 디바이스 ID",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "삭제 결과",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/device": {
+      "get": {
+        "tags": [
+          "Device"
+        ],
+        "summary": "디바이스 조회",
+        "description": "`command` 값으로 전체 목록 또는 단일 디바이스 정보를 조회합니다.",
+        "parameters": [
+          {
+            "name": "command",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "list",
+                "read"
+              ]
+            }
+          },
+          {
+            "name": "did",
+            "in": "query",
+            "description": "`read` 명령에서 사용할 디바이스 ID",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "조회 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Device"
+                    },
+                    {
+                      "$ref": "#/components/schemas/DeviceListResult"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ApiMessage"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Device"
+        ],
+        "summary": "디바이스 등록",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "did"
+                ],
+                "properties": {
+                  "did": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "latitude": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "longitude": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "등록 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Device"
+        ],
+        "summary": "디바이스 정보 수정",
+        "parameters": [
+          {
+            "name": "command",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "update"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "did"
+                ],
+                "properties": {
+                  "did": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "latitude": {
+                    "type": "number",
+                    "format": "double"
+                  },
+                  "longitude": {
+                    "type": "number",
+                    "format": "double"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "수정 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiMessage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Device"
+        ],
+        "summary": "디바이스 삭제",
+        "parameters": [
+          {
+            "name": "command",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "delete"
+              ]
+            }
+          },
+          {
+            "name": "did",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "삭제 결과",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "요청 오류",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/time": {
+      "get": {
+        "tags": [
+          "Utility"
+        ],
+        "summary": "서버 현재 시간 조회",
+        "responses": {
+          "200": {
+            "description": "현재 시간 문자열 (예: \"15/42/2\")",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Air": {
+        "type": "object",
+        "properties": {
+          "aid": {
+            "type": "string"
+          },
+          "did": {
+            "type": "string"
+          },
+          "dust10": {
+            "type": "number",
+            "format": "double"
+          },
+          "dust25": {
+            "type": "number",
+            "format": "double"
+          },
+          "dust100": {
+            "type": "number",
+            "format": "double"
+          },
+          "voc": {
+            "type": "number",
+            "format": "double"
+          },
+          "co": {
+            "type": "number",
+            "format": "double"
+          },
+          "radon": {
+            "type": "number",
+            "format": "double"
+          },
+          "hum": {
+            "type": "number",
+            "format": "double"
+          },
+          "temp": {
+            "type": "number",
+            "format": "double"
+          },
+          "regDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AirListResult": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Air"
+            }
+          }
+        }
+      },
+      "Device": {
+        "type": "object",
+        "properties": {
+          "did": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "authKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "imageUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "regDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastUpdate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastAir": {
+            "$ref": "#/components/schemas/Air"
+          }
+        }
+      },
+      "DeviceListResult": {
+        "type": "object",
+        "properties": {
+          "cursor": {
+            "type": "string",
+            "nullable": true
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Device"
+            }
+          }
+        }
+      },
+      "ApiMessage": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
